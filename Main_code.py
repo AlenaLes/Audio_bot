@@ -13,8 +13,16 @@ bot = telebot.TeleBot(token)
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.send_message(message.chat.id, "Привет! Напиши мне текст и я переведу его в аудио!")
+    bot.send_message(message.chat.id, "Привет, {0.first_name}! Напиши мне текст и я переведу его в аудио!".format(message.from_user))
 
+@bot.message_handler(commands=['help'])
+def help(message):
+    bot.reply_to(message, "/eng - озвучка на английском языке\n/rus - озвучка на русском языке")
+
+@bot.message_handler(commands=['rus'])
+def start(message):
+    bot.send_message(message.chat.id, "Напиши текст, я сделаю аудио на русском")
+    
 @bot.message_handler(content_types = ['text'])
 def send_songs(message):
     text_val = message.text
@@ -22,7 +30,7 @@ def send_songs(message):
     obj.save('Расположение сохраненного файла')
 
     audio = open('Расположение сохраненного файла', 'rb')
-    bot.send_audio(message.chat.id, audio)
+    bot.send_voice(message.chat.id, voice=audio)
 #    audio.close()
 
 bot.polling (none_stop = True)       # отправка запроса на сервер
